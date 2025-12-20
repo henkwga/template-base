@@ -2,16 +2,26 @@
   "name": "template-turbo-next-min",
   "private": true,
   "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev",
-    "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "check-types": "turbo run check-types"
+    "dev": "pnpm exec turbo dev --filter=web",
+    "dev:web": "pnpm exec turbo dev --filter=web",
+    "dev:all": "pnpm exec turbo dev",
+    "check": "pnpm run lint && pnpm run typecheck && pnpm run format:check",
+    "build": "pnpm exec turbo build",
+    "start": "pnpm exec turbo start --filter=web",
+
+    "lint": "pnpm exec turbo lint",
+    "typecheck": "pnpm exec turbo typecheck",
+
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+
+    "clean": "pnpm exec turbo clean && rimraf node_modules"
   },
   "devDependencies": {
     "prettier": "^3.7.4",
     "turbo": "^2.7.0",
-    "typescript": "5.9.2"
+    "typescript": "5.9.2",
+    "rimraf": "^6.0.1"
   },
   "packageManager": "pnpm@9.0.0",
   "engines": {
