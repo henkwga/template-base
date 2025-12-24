@@ -8,13 +8,12 @@
     "check": "pnpm run lint && pnpm run typecheck && pnpm run format:check",
     "build": "pnpm exec turbo build",
     "start": "pnpm exec turbo start --filter=web",
-
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down",
     "lint": "pnpm exec turbo lint",
     "typecheck": "pnpm exec turbo typecheck",
-
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-
     "clean": "pnpm exec turbo clean && rimraf node_modules"
   },
   "devDependencies": {

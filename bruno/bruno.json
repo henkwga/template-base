@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "monorepo",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}
