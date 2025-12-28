@@ -1,10 +1,24 @@
 "use client";
 
-import { useActionState } from "react";
-import { loginAction } from "@/lib/auth-actions";
+import { useActionState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { loginAction } from "@/lib/auth/actions";
+
+type State =
+  | { ok: null }
+  | { ok: true }
+  | { ok: false; message: string };
 
 export function LoginForm() {
-  const [state, formAction] = useActionState(loginAction, { ok: true });
+  const router = useRouter();
+  const [state, formAction] = useActionState<State, FormData>(loginAction, { ok: null });
+
+  useEffect(() => {
+    if (state.ok === true) {
+      router.push("/");
+      router.refresh();
+    }
+  }, [state.ok, router]);
 
   return (
     <div className="card card-pad">
@@ -16,33 +30,21 @@ export function LoginForm() {
       <form action={formAction} className="grid gap-4">
         <div className="grid gap-2">
           <label className="label">E-mail</label>
-          <input
-            className="input"
-            name="email"
-            type="email"
-            required
-          />
+          <input className="input" name="email" type="email" required />
         </div>
 
         <div className="grid gap-2">
           <label className="label">Senha</label>
-          <input
-            className="input"
-            name="password"
-            type="password"
-            required
-          />
+          <input className="input" name="password" type="password" required />
         </div>
 
-        {"ok" in state && state.ok === false && (
+        {state.ok === false && (
           <div className="rounded-xl border border-black/10 bg-white p-3 text-sm text-black/70">
             {state.message}
           </div>
         )}
 
-        <button className="btn btn-lg btn-primary w-full">
-          Entrar
-        </button>
+        <button className="btn btn-lg btn-primary w-full">Entrar</button>
       </form>
     </div>
   );

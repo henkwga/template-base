@@ -1,6 +1,5 @@
 import { ReactNode } from "react";
 import { BackgroundDecor } from "../common/BackgroundDecor";
-import { AuthHeader } from "./AuthHeader";
 
 type AuthLayoutProps = {
   children: ReactNode;
@@ -10,12 +9,11 @@ type AuthLayoutProps = {
   };
 };
 
-export function AuthLayout({ children, rightCta }: AuthLayoutProps) {
+export function AuthLayout({ children }: AuthLayoutProps) {
   return (
     <main className="min-h-screen auth-background">
       <BackgroundDecor />
 
-      <AuthHeader rightCta={rightCta} />
 
       <section className="container flex min-h-[calc(100vh-96px)] items-center justify-center pb-16">
         <div className="w-full max-w-md">{children}</div>

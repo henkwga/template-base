@@ -1,15 +1,40 @@
+"use client";
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Container } from "../base/Container";
+import { authClient } from "../../lib/auth/client";
 
 type NavItem = { href: string; label: string };
+
+type SessionShape =
+  | null
+  | {
+      user?: {
+        name?: string | null;
+        email?: string | null;
+      } | null;
+    };
 
 export function SiteHeader(props: {
   nav?: NavItem[];
   cta?: { href: string; label: string; variant?: "primary" | "outline" };
+  initialSession?: SessionShape;
 }) {
-  const { nav = [], cta } = props;
+  const { nav = [], cta, initialSession = null } = props;
+  const router = useRouter();
 
-  const ctaClass = `btn btn-md ${cta?.variant === "outline" ? "btn-outline" : "btn-primary"}`;
+  const ctaClass = `btn btn-md ${
+    cta?.variant === "outline" ? "btn-outline" : "btn-primary"
+  }`;
+
+  const { data: session, isPending } = authClient.useSession();
+
+  // server -> client fallback (evita flicker)
+  const s = (session ?? initialSession) as SessionShape;
+
+  const isLogged = !!s?.user;
+  const displayName = s?.user?.name ?? s?.user?.email ?? "usuário";
 
   return (
     <header>
@@ -32,18 +57,78 @@ export function SiteHeader(props: {
             </Link>
           ))}
 
-          {cta ? (
-            <Link href={cta.href} className={ctaClass}>
-              {cta.label}
-            </Link>
-          ) : null}
+          {isLogged ? (
+            <>
+              <span className="px-3 py-2 text-sm text-black/70">
+                Olá, <span className="font-medium text-black">{displayName}</span>!
+              </span>
+
+              <button
+                className="btn btn-md btn-outline"
+                onClick={async () => {
+                  await authClient.signOut();
+                  router.refresh();
+                }}
+              >
+                Sair
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                className={`btn btn-md btn-outline ${isPending ? "opacity-60 pointer-events-none" : ""}`}
+                href="/login"
+              >
+                Entrar
+              </Link>
+
+              {cta ? (
+                <Link
+                  href={cta.href}
+                  className={`${ctaClass} ${isPending ? "opacity-60 pointer-events-none" : ""}`}
+                >
+                  {cta.label}
+                </Link>
+              ) : (
+                <Link
+                  href="/register"
+                  className={`btn btn-md btn-primary ${isPending ? "opacity-60 pointer-events-none" : ""}`}
+                >
+                  Começar
+                </Link>
+              )}
+            </>
+          )}
         </nav>
 
-        {cta ? (
-          <Link href={cta.href} className={`sm:hidden ${ctaClass}`}>
-            {cta.label}
-          </Link>
-        ) : null}
+        {/* Mobile */}
+        <div className="sm:hidden">
+          {isLogged ? (
+            <button
+              className="btn btn-md btn-outline"
+              onClick={async () => {
+                await authClient.signOut();
+                router.refresh();
+              }}
+            >
+              Sair
+            </button>
+          ) : cta ? (
+            <Link
+              href={cta.href}
+              className={`${ctaClass} ${isPending ? "opacity-60 pointer-events-none" : ""}`}
+            >
+              {cta.label}
+            </Link>
+          ) : (
+            <Link
+              href="/login"
+              className={`btn btn-md btn-primary ${isPending ? "opacity-60 pointer-events-none" : ""}`}
+            >
+              Entrar
+            </Link>
+          )}
+        </div>
       </Container>
     </header>
   );
