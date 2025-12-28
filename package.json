@@ -8,19 +8,23 @@
     "check": "pnpm run lint && pnpm run typecheck && pnpm run format:check",
     "build": "pnpm exec turbo build",
     "start": "pnpm exec turbo start --filter=web",
-    "db:up": "docker compose up -d",
-    "db:down": "docker compose down",
     "lint": "pnpm exec turbo lint",
     "typecheck": "pnpm exec turbo typecheck",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "clean": "pnpm exec turbo clean && rimraf node_modules"
+    "clean": "pnpm exec turbo clean && rimraf node_modules",
+    "db:generate": "pnpm -C apps/web db:generate",
+    "db:push": "pnpm -C apps/web db:push",
+    "db:studio": "pnpm -C apps/web db:studio"
   },
   "devDependencies": {
+    "dotenv-cli": "^7.4.4",
+    "prisma": "6.15.0",
     "prettier": "^3.7.4",
     "turbo": "^2.7.0",
     "typescript": "5.9.2",
-    "rimraf": "^6.0.1"
+    "rimraf": "^6.0.1",
+    "@types/node": "^22.0.0"
   },
   "packageManager": "pnpm@9.0.0",
   "engines": {
